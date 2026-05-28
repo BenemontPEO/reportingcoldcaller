@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PEO Performance Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a5f;
+      --primary-light: #2c5282;
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --april: #3b82f6;
+      --samantha: #8b5cf6;
+      --unused: #cbd5e1;
+    }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+      border: 1px solid rgb(226 232 240 / 0.6);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; }
+    .delay-4 { animation-delay: 0.2s; }
+    .delay-5 { animation-delay: 0.25s; }
+    .delay-6 { animation-delay: 0.3s; }
+    .delay-7 { animation-delay: 0.35s; }
+    .delay-8 { animation-delay: 0.4s; }
+    .custom-scroll::-webkit-scrollbar { height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+    .chart-container { position: relative; height: 280px; width: 100%; }
+    .chart-container-lg { position: relative; height: 300px; width: 100%; }
+    .sortable { cursor: pointer; user-select: none; transition: background 0.15s; }
+    .sortable:hover { background: #f8fafc; }
+    .insight-dark { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+    .insight-emerald { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); }
+    .insight-blue { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       EDIT YOUR DATA HERE — Modify the objects below
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    const LEAD_DATA = {
+      month: 'May 2026',
+      dateGiven: '2026-05-20',
+      sources: [
+        {
+          name: 'ADP TotalSource',
+          states: [
+            { state: 'California', leads: 295, april: 151, samantha: 144, unused: 0 },
+            { state: 'New York', leads: 219, april: 42, samantha: 53, unused: 124 },
+            { state: 'Colorado', leads: 76, april: 57, samantha: 19, unused: 0 },
+            { state: 'Arizona', leads: 34, april: 0, samantha: 34, unused: 0 },
+          ]
+        },
+        {
+          name: 'TriNet',
+          states: [
+            { state: 'California', leads: 379, april: 243, samantha: 136, unused: 0 },
+            { state: 'New York', leads: 289, april: 0, samantha: 71, unused: 218 },
+            { state: 'Colorado', leads: 72, april: 7, samantha: 14, unused: 51 },
+            { state: 'Arizona', leads: 29, april: 0, samantha: 29, unused: 0 },
+          ]
+        }
+      ]
+    };
+
+    // Activity log — All zeroed out as no calls have happened yet
+    const ACTIVITY_LOG = [
+      { date: '2026-05-20', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-21', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-22', agentName: 'April', leadSource: 'ADP TotalSource', state: 'New York', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-23', agentName: 'April', leadSource: 'ADP TotalSource', state: 'Colorado', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-24', agentName: 'April', leadSource: 'ADP TotalSource', state: 'Colorado', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-25', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-20', agentName: 'April', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-21', agentName: 'April', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-22', agentName: 'April', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-23', agentName: 'April', leadSource: 'TriNet', state: 'Colorado', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-24', agentName: 'April', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-25', agentName: 'April', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-20', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-21', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-22', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'New York', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-23', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'Colorado', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-24', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'Arizona', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-25', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-20', agentName: 'Samantha', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-21', agentName: 'Samantha', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-22', agentName: 'Samantha', leadSource: 'TriNet', state: 'New York', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-23', agentName: 'Samantha', leadSource: 'TriNet', state: 'New York', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-24', agentName: 'Samantha', leadSource: 'TriNet', state: 'Colorado', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-25', agentName: 'Samantha', leadSource: 'TriNet', state: 'Arizona', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+      { date: '2026-05-25', agentName: 'Samantha', leadSource: 'TriNet', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
+    ];
+  </script>
+
+  <script>
+    const AGENTS = ['April', 'Samantha'];
+    const MONTHS = ['May 2026'];
+    const SOURCES = ['All', 'ADP TotalSource', 'TriNet'];
+    const COLORS = {
+      primary: '#1e3a5f', primaryLight: '#2c5282', accent: '#10b981', accentLight: '#34d399',
+      warning: '#f59e0b', danger: '#ef4444', april: '#3b82f6', samantha: '#8b5cf6', unused: '#cbd5e1',
+      textMuted: '#6b7280', border: '#e2e8f0'
+    };
+
+    let appState = {
+      leadSource: 'All',
+      month: 'May 2026',
+      agent: 'All',
+      sortKey: 'date',
+      sortDir: 'desc'
+    };
+
+    let chartInstances = {};
+
+    function formatNumber(n) {
+      if (n === undefined || n === null || isNaN(n)) return '—';
+      return n.toLocaleString();
+    }
+    function formatPercent(n) {
+      if (n === undefined || n === null || isNaN(n) || !isFinite(n)) return '—';
+      return (n * 100).toFixed(1) + '%';
+    }
+    function safeDiv(a, b) {
+      return (b === 0 || !b || !a) ? 0 : a / b;
+    }
+    function fmtDate(d) {
+      return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function getFilteredActivity() {
+      return ACTIVITY_LOG.filter(row => {
+        const matchSource = appState.leadSource === 'All' || row.leadSource === appState.leadSource;
+        const matchAgent = appState.agent === 'All' || row.agentName === appState.agent;
+        const matchMonth = appState.month === 'All' || row.date.startsWith('2026-05');
+        return matchSource && matchAgent && matchMonth;
+      });
+    }
+
+    function getLeadSummary() {
+      let totalLeads = 0, totalApril = 0, totalSamantha = 0, totalUnused = 0;
+      const sourceData = [];
+      LEAD_DATA.sources.forEach(source => {
+        if (appState.leadSource !== 'All' && source.name !== appState.leadSource) return;
+        let sLeads = 0, sApril = 0, sSamantha = 0, sUnused = 0;
+        const stateRows = source.states.map(st => {
+          const computedUnused = st.leads - st.april - st.samantha;
+          sLeads += st.leads; sApril += st.april; sSamantha += st.samantha; sUnused += st.unused;
+          return { ...st, source: source.name, computedUnused };
+        });
+        totalLeads += sLeads; totalApril += sApril; totalSamantha += sSamantha; totalUnused += sUnused;
+        sourceData.push({ name: source.name, leads: sLeads, april: sApril, samantha: sSamantha, unused: sUnused, states: stateRows });
+      });
+      const displayLeads = appState.agent === 'All' ? totalLeads : (appState.agent === 'April' ? totalApril : totalSamantha);
+      const displayUnused = appState.agent === 'All' ? totalUnused : 0;
+      return { sources: sourceData, totalLeads, totalApril, totalSamantha, totalUnused, displayLeads, displayUnused };
+    }
+
+    function getKPIData() {
+      const activity = getFilteredActivity();
+      const leadSum = getLeadSummary();
+      const totalCalls = activity.reduce((s, r) => s + r.numberOfCalls, 0);
+      const totalAppointments = activity.reduce((s, r) => s + r.appointmentsScheduled, 0);
+      const totalSold = activity.reduce((s, r) => s + r.sold, 0);
+      return {
+        totalCalls, totalAppointments, totalSold,
+        setRate: safeDiv(totalAppointments, totalCalls),
+        closeRate: safeDiv(totalSold, totalAppointments),
+        unusedPercent: safeDiv(leadSum.displayUnused, leadSum.displayLeads),
+        totalLeads: leadSum.displayLeads,
+        totalUnused: leadSum.displayUnused
+      };
+    }
+
+    function getTimeSeriesData() {
+      const activity = getFilteredActivity();
+      const dates = [...new Set(activity.map(r => r.date))].sort();
+      return dates.map(date => {
+        const dayRows = activity.filter(r => r.date === date);
+        const april = dayRows.filter(r => r.agentName === 'April');
+        const samantha = dayRows.filter(r => r.agentName === 'Samantha');
+        return {
+          label: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          aprilCalls: april.reduce((s, r) => s + r.numberOfCalls, 0),
+          samanthaCalls: samantha.reduce((s, r) => s + r.numberOfCalls, 0),
+          aprilAppts: april.reduce((s, r) => s + r.appointmentsScheduled, 0),
+          samanthaAppts: samantha.reduce((s, r) => s + r.appointmentsScheduled, 0),
+        };
+      });
+    }
+
+    function getAllocationData() {
+      const rows = [];
+      getLeadSummary().sources.forEach(source => {
+        source.states.forEach(st => {
+          rows.push({
+            name: `${st.state} (${source.name.split(' ')[0]})`,
+            April: st.april,
+            Samantha: st.samantha,
+            Unused: st.unused,
+            Total: st.leads
+          });
+        });
+      });
+      return rows;
+    }
+
+    function getSourceStackData() {
+      return getLeadSummary().sources.map(s => ({
+        name: s.name,
+        April: s.april,
+        Samantha: s.samantha,
+        Unused: s.unused,
+      }));
+    }
+
+    function getDonutData() {
+      const activity = getFilteredActivity();
+      const aprilAppts = activity.filter(r => r.agentName === 'April').reduce((s, r) => s + r.appointmentsScheduled, 0);
+      const samanthaAppts = activity.filter(r => r.agentName === 'Samantha').reduce((s, r) => s + r.appointmentsScheduled, 0);
+      if (appState.agent !== 'All') {
+        return [{ name: appState.agent, value: appState.agent === 'April' ? aprilAppts : samanthaAppts }];
+      }
+      return [
+        { name: 'April', value: aprilAppts },
+        { name: 'Samantha', value: samanthaAppts },
+      ].filter(d => d.value > 0);
+    }
+
+    function getInsights() {
+      const activity = getFilteredActivity();
+      const byAgent = {};
+      AGENTS.forEach(a => {
+        const rows = activity.filter(r => r.agentName === a);
+        const calls = rows.reduce((s, r) => s + r.numberOfCalls, 0);
+        const appts = rows.reduce((s, r) => s + r.appointmentsScheduled, 0);
+        byAgent[a] = { calls, appts, setRate: safeDiv(appts, calls) };
+      });
+      const bestAgent = Object.entries(byAgent).sort((a, b) => b[1].setRate - a[1].setRate)[0];
+
+      const bySource = {};
+      getLeadSummary().sources.forEach(s => {
+        const srcRows = activity.filter(r => r.leadSource === s.name);
+        const appts = srcRows.reduce((sum, r) => sum + r.appointmentsScheduled, 0);
+        const calls = srcRows.reduce((sum, r) => sum + r.numberOfCalls, 0);
+        bySource[s.name] = { appts, calls, rate: safeDiv(appts, calls) };
+      });
+      const bestSource = Object.entries(bySource).sort((a, b) => b[1].rate - a[1].rate)[0];
+
+      const byState = {};
+      activity.forEach(r => { if (!byState[r.state]) byState[r.state] = { appts: 0 }; byState[r.state].appts += r.appointmentsScheduled; });
+      const topState = Object.entries(byState).sort((a, b) => b[1].appts - a[1].appts)[0];
+
+      return { bestAgent, bestSource, topState };
+    }
+
+    function getComparisonData() {
+      const activity = getFilteredActivity();
+      const result = {};
+      AGENTS.forEach(a => {
+        const rows = activity.filter(r => r.agentName === a);
+        const calls = rows.reduce((s, r) => s + r.numberOfCalls, 0);
+        const appts = rows.reduce((s, r) => s + r.appointmentsScheduled, 0);
+        result[a] = { calls, appts, setRate: safeDiv(appts, calls) };
+      });
+      return result;
+    }
+
+    function hasDiscrepancy() {
+      return getLeadSummary().sources.some(s => s.states.some(st => st.computedUnused !== st.unused));
+    }
+  </script>
+
+  <script>
+    function renderKPIs() {
+      const kpi = getKPIData();
+      const discrepancy = hasDiscrepancy() && appState.agent === 'All';
+      const html = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          ${kpiCard('Total Leads', formatNumber(kpi.totalLeads), 'Allocated + Unused', 'layers', COLORS.primary, 0)}
+          ${kpiCard('Total Calls', formatNumber(kpi.totalCalls), `Set Rate: ${formatPercent(kpi.setRate)}`, 'phone', COLORS.primaryLight, 1)}
+          ${kpiCard('Appointments', formatNumber(kpi.totalAppointments), `Close Rate: ${formatPercent(kpi.closeRate)}`, 'calendar', COLORS.accent, 2)}
+          ${kpiCard('Deals Sold', formatNumber(kpi.totalSold), `${formatPercent(safeDiv(kpi.totalSold, kpi.totalCalls))} of calls`, 'dollar', COLORS.accentLight, 3)}
+          ${kpiCard('Unused Leads', formatNumber(kpi.totalUnused), `${formatPercent(kpi.unusedPercent)} of total inventory`, 'alert', COLORS.warning, 4, discrepancy)}
+        </div>
+      `;
+      document.getElementById('kpi-section').innerHTML = html;
+    }
+
+    function kpiCard(title, value, subtitle, icon, color, idx, warning) {
+      const icons = {
+        layers: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`,
+        phone: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+        calendar: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+        dollar: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+        alert: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+      };
+      return `
+        <div class="card relative p-6 animate-in delay-${idx+1}">
+          ${warning ? `<div class="absolute top-4 right-4 text-amber-500" title="Data discrepancy detected"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>` : ''}
+          <div class="flex items-start justify-between mb-4">
+            <div class="p-3 rounded-lg" style="background-color: ${color}15; color: ${color}">${icons[icon]}</div>
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-slate-500 uppercase tracking-wider">${title}</p>
+            <p class="text-3xl font-bold tracking-tight text-slate-900 tabular">${value}</p>
+            ${subtitle ? `<p class="text-sm text-slate-500 font-medium mt-1">${subtitle}</p>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFilters() {
+      const mkBtn = (type, val, label, active) => `
+        <button onclick="setFilter('${type}', '${val}')" 
+          class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${active ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'}">
+          ${label}
+        </button>
+      `;
+      const html = `
+        <div class="card p-4 sm:p-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              Global Filters
+            </div>
+            <button onclick="resetFilters()" class="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              Reset Filters
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Lead Source</label>
+              <div class="flex flex-wrap gap-2">
+                ${SOURCES.map(s => mkBtn('leadSource', s, s, appState.leadSource === s)).join('')}
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Month</label>
+              <div class="flex flex-wrap gap-2">
+                ${MONTHS.map(m => mkBtn('month', m, m, appState.month === m)).join('')}
+                <button onclick="setFilter('month', 'All')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${appState.month === 'All' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'}">All</button>
+              </div>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Agent</label>
+              <div class="flex flex-wrap gap-2">
+                ${['All', ...AGENTS].map(a => mkBtn('agent', a, a, appState.agent === a)).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('filter-section').innerHTML = html;
+    }
+
+    function renderComparison() {
+      if (appState.agent !== 'All') { document.getElementById('comparison-section').innerHTML = ''; return; }
+      const data = getComparisonData();
+      const html = `
+        <div class="mb-2">
+          <div class="flex items-center gap-2 mb-1">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            <h2 class="text-lg font-semibold text-slate-900">Agent Comparison</h2>
+          </div>
+          <p class="text-sm text-slate-500 ml-7">Side-by-side performance breakdown</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in delay-3">
+          ${AGENTS.map(name => {
+            const color = name === 'April' ? COLORS.april : COLORS.samantha;
+            return `
+              <div class="card p-6">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: ${color}">${name[0]}</div>
+                  <div>
+                    <h3 class="font-semibold text-slate-900">${name}</h3>
+                    <p class="text-xs text-slate-500">${appState.leadSource === 'All' ? 'All Sources' : appState.leadSource}</p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                  <div>
+                    <p class="text-2xl font-bold text-slate-900 tabular">${formatNumber(data[name]?.calls)}</p>
+                    <p class="text-xs text-slate-500 mt-1">Calls Made</p>
+                  </div>
+                  <div>
+                    <p class="text-2xl font-bold text-slate-900 tabular">${formatNumber(data[name]?.appts)}</p>
+                    <p class="text-xs text-slate-500 mt-1">Appointments</p>
+                  </div>
+                  <div>
+                    <p class="text-2xl font-bold text-slate-900 tabular">${formatPercent(data[name]?.setRate)}</p>
+                    <p class="text-xs text-slate-500 mt-1">Set Rate</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      document.getElementById('comparison-section').innerHTML = html;
+    }
+
+    function renderTable() {
+      const activity = getFilteredActivity();
+      const sorted = [...activity].sort((a, b) => {
+        const aVal = a[appState.sortKey];
+        const bVal = b[appState.sortKey];
+        if (aVal < bVal) return appState.sortDir === 'asc' ? -1 : 1;
+        if (aVal > bVal) return appState.sortDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+      const kpi = getKPIData();
+      const sortIcon = (key) => {
+        if (appState.sortKey !== key) return '';
+        return appState.sortDir === 'asc' 
+          ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline ml-1"><polyline points="18 15 12 9 6 15"/></svg>'
+          : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline ml-1"><polyline points="6 9 12 15 18 9"/></svg>';
+      };
+      const html = `
+        <div class="mb-2">
+          <div class="flex items-center gap-2 mb-1">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <h2 class="text-lg font-semibold text-slate-900">Cold Caller Activity Log</h2>
+          </div>
+          <p class="text-sm text-slate-500 ml-7">Day-by-day performance records</p>
+        </div>
+        <div class="card overflow-hidden animate-in delay-4">
+          <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200">
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('date')">Date${sortIcon('date')}</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('agentName')">Agent${sortIcon('agentName')}</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('leadSource')">Source${sortIcon('leadSource')}</th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('state')">State${sortIcon('state')}</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('numberOfCalls')">Calls${sortIcon('numberOfCalls')}</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('appointmentsScheduled')">Appts${sortIcon('appointmentsScheduled')}</th>
+                  <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('sold')">Sold${sortIcon('sold')}</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${sorted.length === 0 ? `<tr><td colspan="7" class="px-4 py-12 text-center text-slate-400">No records match the current filters.</td></tr>` : sorted.map(row => `
+                  <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-4 py-3 font-medium text-slate-900">${fmtDate(row.date)}</td>
+                    <td class="px-4 py-3">
+                      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${row.agentName === 'April' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'}">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        ${row.agentName}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-slate-600">${row.leadSource}</td>
+                    <td class="px-4 py-3 text-slate-600">${row.state}</td>
+                    <td class="px-4 py-3 font-semibold text-slate-900 tabular text-right">${row.numberOfCalls}</td>
+                    <td class="px-4 py-3 font-semibold text-emerald-600 tabular text-right">${row.appointmentsScheduled}</td>
+                    <td class="px-4 py-3 font-semibold text-slate-900 tabular text-right">${row.sold}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+              <tfoot class="bg-slate-50 border-t border-slate-200">
+                <tr>
+                  <td colspan="4" class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Totals</td>
+                  <td class="px-4 py-3 text-sm font-bold text-slate-900 tabular text-right">${formatNumber(kpi.totalCalls)}</td>
+                  <td class="px-4 py-3 text-sm font-bold text-emerald-600 tabular text-right">${formatNumber(kpi.totalAppointments)}</td>
+                  <td class="px-4 py-3 text-sm font-bold text-slate-900 tabular text-right">${formatNumber(kpi.totalSold)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      `;
+      document.getElementById('table-section').innerHTML = html;
+    }
+
+    function renderInsights() {
+      const insights = getInsights();
+      const html = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in delay-5">
+          <div class="card p-4 insight-dark text-white border-0">
+            <div class="flex items-center gap-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-400"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              <div>
+                <p class="text-xs text-slate-400 uppercase tracking-wider">Best Performer</p>
+                <p class="text-lg font-bold">${insights.bestAgent?.[0] || '—'}</p>
+                <p class="text-xs text-slate-400">${formatPercent(insights.bestAgent?.[1]?.setRate)} set rate</p>
+              </div>
+            </div>
+          </div>
+          <div class="card p-4 insight-emerald text-white border-0">
+            <div class="flex items-center gap-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-300"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              <div>
+                <p class="text-xs text-emerald-300 uppercase tracking-wider">Top Source</p>
+                <p class="text-lg font-bold">${insights.bestSource?.[0] || '—'}</p>
+                <p class="text-xs text-emerald-300">${formatPercent(insights.bestSource?.[1]?.rate)} conversion</p>
+              </div>
+            </div>
+          </div>
+          <div class="card p-4 insight-blue text-white border-0">
+            <div class="flex items-center gap-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-300"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <div>
+                <p class="text-xs text-blue-300 uppercase tracking-wider">Top State</p>
+                <p class="text-lg font-bold">${insights.topState?.[0] || '—'}</p>
+                <p class="text-xs text-blue-300">${insights.topState?.[1]?.appts || 0} appointments</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('insights-section').innerHTML = html;
+    }
+
+    function renderAllocationTables() {
+      const leadSum = getLeadSummary();
+      const html = `
+        <div class="mb-2">
+          <div class="flex items-center gap-2 mb-1">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            <h2 class="text-lg font-semibold text-slate-900">Lead Allocation Detail</h2>
+          </div>
+          <p class="text-sm text-slate-500 ml-7">Per-source, per-state breakdown with verification</p>
+        </div>
+        <div class="space-y-6 animate-in delay-8">
+          ${leadSum.sources.map(source => `
+            <div class="card overflow-hidden">
+              <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 class="font-semibold text-slate-900">${source.name}</h3>
+                  <p class="text-xs text-slate-500">Date Given: ${LEAD_DATA.dateGiven}</p>
+                </div>
+                <div class="flex gap-4 text-sm">
+                  <div class="text-right"><p class="font-bold text-slate-900 tabular">${formatNumber(source.leads)}</p><p class="text-xs text-slate-500">Total Leads</p></div>
+                  <div class="text-right"><p class="font-bold text-slate-900 tabular">${formatNumber(source.unused)}</p><p class="text-xs text-slate-500">Unused</p></div>
+                </div>
+              </div>
+              <div class="overflow-x-auto custom-scroll">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b border-slate-100">
+                      <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">State</th>
+                      <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Leads</th>
+                      <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase">April</th>
+                      <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Samantha</th>
+                      <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Unused (Stated)</th>
+                      <th class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Computed</th>
+                      <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-50">
+                    ${source.states.map(st => {
+                      const ok = st.computedUnused === st.unused;
+                      return `
+                        <tr class="hover:bg-slate-50/50">
+                          <td class="px-6 py-3 font-medium text-slate-900">${st.state}</td>
+                          <td class="px-6 py-3 text-right text-slate-900 tabular">${st.leads}</td>
+                          <td class="px-6 py-3 text-right text-blue-600 font-medium tabular">${st.april}</td>
+                          <td class="px-6 py-3 text-right text-purple-600 font-medium tabular">${st.samantha}</td>
+                          <td class="px-6 py-3 text-right text-slate-900 tabular">${st.unused}</td>
+                          <td class="px-6 py-3 text-right text-slate-600 tabular">${st.computedUnused}</td>
+                          <td class="px-6 py-3 text-center">
+                            ${!ok ? `<span class="inline-flex items-center gap-1 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-md" title="Math: ${st.computedUnused}, Stated: ${st.unused}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Discrepancy</span>` : `<span class="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">✓ Verified</span>`}
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      document.getElementById('allocation-section').innerHTML = html;
+    }
+  </script>
+
+  <script>
+    function destroyCharts() {
+      Object.values(chartInstances).forEach(c => { if (c) c.destroy(); });
+      chartInstances = {};
+    }
+
+    function commonOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', size: 12 } } },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            titleFont: { family: 'Inter', size: 13, weight: '600' },
+            bodyFont: { family: 'Inter', size: 12 },
+            padding: 12,
+            cornerRadius: 8,
+            displayColors: true,
+            boxPadding: 4
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11 }, color: '#6b7280' }, border: { display: false } },
+          y: { grid: { color: '#f1f5f9' }, ticks: { font: { family: 'Inter', size: 11 }, color: '#6b7280' }, border: { display: false } }
+        }
+      };
+    }
+
+    function renderCharts() {
+      destroyCharts();
+      const timeData = getTimeSeriesData();
+      const allocData = getAllocationData();
+      const stackData = getSourceStackData();
+      const donutData = getDonutData();
+
+      const ctx1 = document.getElementById('chart-calls');
+      if (ctx1) {
+        const datasets = [];
+        if (appState.agent === 'All' || appState.agent === 'April') {
+          datasets.push({
+            label: 'April', data: timeData.map(d => d.aprilCalls),
+            borderColor: COLORS.april, backgroundColor: COLORS.april + '20',
+            fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 5
+          });
+        }
+        if (appState.agent === 'All' || appState.agent === 'Samantha') {
+          datasets.push({
+            label: 'Samantha', data: timeData.map(d => d.samanthaCalls),
+            borderColor: COLORS.samantha, backgroundColor: COLORS.samantha + '20',
+            fill: true, tension: 0.4, pointRadius: 3, pointHoverRadius: 5
+          });
+        }
+        chartInstances.calls = new Chart(ctx1, {
+          type: 'line',
+          data: { labels: timeData.map(d => d.label), datasets },
+          options: commonOptions()
+        });
+      }
+
+      const ctx2 = document.getElementById('chart-appts');
+      if (ctx2) {
+        const datasets = [];
+        if (appState.agent === 'All' || appState.agent === 'April') {
+          datasets.push({
+            label: 'April', data: timeData.map(d => d.aprilAppts),
+            borderColor: COLORS.april, backgroundColor: COLORS.april,
+            tension: 0.4, pointRadius: 4, pointHoverRadius: 6
+          });
+        }
+        if (appState.agent === 'All' || appState.agent === 'Samantha') {
+          datasets.push({
+            label: 'Samantha', data: timeData.map(d => d.samanthaAppts),
+            borderColor: COLORS.samantha, backgroundColor: COLORS.samantha,
+            tension: 0.4, pointRadius: 4, pointHoverRadius: 6
+          });
+        }
+        chartInstances.appts = new Chart(ctx2, {
+          type: 'line',
+          data: { labels: timeData.map(d => d.label), datasets },
+          options: commonOptions()
+        });
+      }
+
+      const ctx3 = document.getElementById('chart-states');
+      if (ctx3) {
+        chartInstances.states = new Chart(ctx3, {
+          type: 'bar',
+          data: {
+            labels: allocData.map(d => d.name),
+            datasets: [
+              { label: 'April', data: allocData.map(d => d.April), backgroundColor: COLORS.april, borderRadius: 2 },
+              { label: 'Samantha', data: allocData.map(d => d.Samantha), backgroundColor: COLORS.samantha, borderRadius: 2 },
+              { label: 'Unused', data: allocData.map(d => d.Unused), backgroundColor: COLORS.unused, borderRadius: { topLeft: 4, topRight: 4 } }
+            ]
+          },
+          options: {
+            ...commonOptions(),
+            indexAxis: 'y',
+            scales: {
+              x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Inter', size: 11 }, color: '#6b7280' }, border: { display: false } },
+              y: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Inter', size: 11 }, color: '#6b7280' }, border: { display: false } }
+            }
+          }
+        });
+      }
+
+      const ctx4 = document.getElementById('chart-sources');
+      if (ctx4) {
+        chartInstances.sources = new Chart(ctx4, {
+          type: 'bar',
+          data: {
+            labels: stackData.map(d => d.name),
+            datasets: [
+              { label: 'April', data: stackData.map(d => d.April), backgroundColor: COLORS.april, borderRadius: 2 },
+              { label: 'Samantha', data: stackData.map(d => d.Samantha), backgroundColor: COLORS.samantha, borderRadius: 2 },
+              { label: 'Unused', data: stackData.map(d => d.Unused), backgroundColor: COLORS.unused, borderRadius: { topLeft: 4, topRight: 4 } }
+            ]
+          },
+          options: {
+            ...commonOptions(),
+            scales: {
+              x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Inter', size: 12 }, color: '#6b7280' }, border: { display: false } },
+              y: { stacked: true, grid: { color: '#f1f5f9' }, ticks: { font: { family: 'Inter', size: 11 }, color: '#6b7280' }, border: { display: false } }
+            }
+          }
+        });
+      }
+
+      const ctx5 = document.getElementById('chart-donut');
+      if (ctx5) {
+        chartInstances.donut = new Chart(ctx5, {
+          type: 'doughnut',
+          data: {
+            labels: donutData.map(d => d.name),
+            datasets: [{
+              data: donutData.map(d => d.value),
+              backgroundColor: donutData.map(d => d.name === 'April' ? COLORS.april : COLORS.samantha),
+              borderWidth: 0,
+              hoverOffset: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 10, font: { family: 'Inter', size: 13 } } },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                bodyFont: { family: 'Inter', size: 13 },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                  label: function(context) {
+                    return ` ${context.label}: ${formatNumber(context.raw)} appointments`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+  </script>
+
+  <script>
+    function setFilter(type, value) {
+      appState[type] = value;
+      refreshAll();
+    }
+
+    function setSort(key) {
+      if (appState.sortKey === key) {
+        appState.sortDir = appState.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        appState.sortKey = key;
+        appState.sortDir = 'desc';
+      }
+      renderTable();
+    }
+
+    function resetFilters() {
+      appState = { leadSource: 'All', month: 'May 2026', agent: 'All', sortKey: 'date', sortDir: 'desc' };
+      refreshAll();
+    }
+
+    function refreshAll() {
+      renderKPIs();
+      renderFilters();
+      renderComparison();
+      renderTable();
+      renderInsights();
+      renderCharts();
+      renderAllocationTables();
+      updateHeaderWarning();
+    }
+
+    function updateHeaderWarning() {
+      const el = document.getElementById('header-warning');
+      if (el) el.style.display = hasDiscrepancy() ? 'inline-flex' : 'none';
+    }
+  </script>
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">PEO Performance Dashboard</h1>
+            <p class="text-xs text-slate-500 font-medium">Cold-Caller Analytics • May 2026</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="hidden sm:inline-flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Live Data
+          </span>
+          <span id="header-warning" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Data Discrepancy Detected
+          </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <section id="kpi-section"></section>
+    <section id="filter-section"></section>
+    <section id="comparison-section"></section>
+    <section id="table-section"></section>
+
+    <section class="space-y-6">
+      <div class="mb-2">
+        <div class="flex items-center gap-2 mb-1">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <h2 class="text-lg font-semibold text-slate-900">Performance Trends</h2>
+        </div>
+        <p class="text-sm text-slate-500 ml-7">Visual analytics and insights</p>
+      </div>
+      <div id="insights-section"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in delay-6">
+        <div class="card p-6">
+          <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Calls Over Time
+          </h3>
+          <div class="chart-container"><canvas id="chart-calls"></canvas></div>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Appointments Scheduled
+          </h3>
+          <div class="chart-container"><canvas id="chart-appts"></canvas></div>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Leads Allocated by State
+          </h3>
+          <div class="chart-container"><canvas id="chart-states"></canvas></div>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            Allocated vs. Unused by Source
+          </h3>
+          <div class="chart-container"><canvas id="chart-sources"></canvas></div>
+        </div>
+        <div class="card p-6 lg:col-span-2">
+          <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+            Agent Share of Appointments
+          </h3>
+          <div class="chart-container-lg max-w-2xl mx-auto"><canvas id="chart-donut"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="allocation-section"></section>
+
+    <footer class="pt-8 pb-12 text-center text-xs text-slate-400">
+      <p>PEO Cold-Caller Performance Dashboard • Built for internal stakeholder review</p>
+      <p class="mt-1">Data accuracy verified against source spreadsheet • <span id="today"></span></p>
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById('today').textContent = new Date().toLocaleDateString();
+    refreshAll();
+  </script>
+</body>
+</html>
