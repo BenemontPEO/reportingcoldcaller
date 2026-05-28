@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Heart's Portal | Awakening God Within - Transform Your Consciousness</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: var(--color-text-primary);
+      background: var(--color-background-primary);
+    }
+
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #fef9f3;
+      --color-text-primary: #1a1a1a;
+      --color-text-secondary: #666666;
+      --color-accent: #d4af37;
+      --color-accent-light: #e8c547;
+      --color-border: #e8dcc8;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-background-primary: #ffffff;
+        --color-background-secondary: #fef9f3;
+        --color-text-primary: #1a1a1a;
+        --color-text-secondary: #666666;
+        --color-accent: #d4af37;
+        --color-accent-light: #e8c547;
+        --color-border: #e8dcc8;
+      }
+    }
+
+    /* Typography */
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 500;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--color-text-primary);
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-bottom: 1.5rem;
+      margin-top: 2rem;
+      color: var(--color-text-primary);
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--color-text-primary);
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--color-text-primary);
+    }
+
+    .text-secondary {
+      color: var(--color-text-secondary);
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section {
+      padding: 4rem 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section-light {
+      background: var(--color-background-secondary);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 6rem 2rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--color-background-secondary) 0%, var(--color-background-primary) 100%);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero .subtitle {
+      font-size: 1.3rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .subtext {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--color-accent);
+      color: white;
+      text-decoration: none;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--color-accent-light);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .btn-group {
+      margin: 2rem 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* Lists */
+    .list-items {
+      display: grid;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .list-item {
+      padding-left: 2rem;
+      position: relative;
+    }
+
+    .list-item:before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: var(--color-accent);
+      font-weight: bold;
+    }
+
+    /* Testimonials */
+    .testimonial {
+      background: var(--color-background-secondary);
+      padding: 2rem;
+      border-left: 4px solid var(--color-accent);
+      margin: 1.5rem 0;
+      border-radius: 4px;
+    }
+
+    .testimonial p {
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Pricing Cards */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .price-card {
+      background: var(--color-background-secondary);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 2px solid var(--color-border);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .price-card:hover {
+      border-color: var(--color-accent);
+      transform: translateY(-5px);
+    }
+
+    .price-card h3 {
+      margin-bottom: 1rem;
+      margin-top: 0;
+    }
+
+    .price-amount {
+      font-size: 2.5rem;
+      font-weight: 500;
+      color: var(--color-accent);
+      margin: 1rem 0;
+    }
+
+    .price-description {
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    /* About */
+    .about-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin: 2rem 0;
+    }
+
+    .about-content h3 {
+      margin-top: 0;
+    }
+
+    @media (max-width: 768px) {
+      .about-section {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* FAQ */
+    .faq-item {
+      margin: 2rem 0;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-question {
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--color-accent);
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+    }
+
+    .faq-answer {
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Emphasis sections */
+    .emphasis-box {
+      background: var(--color-background-secondary);
+      border-left: 4px solid var(--color-accent);
+      padding: 2rem;
+      margin: 2rem 0;
+      border-radius: 4px;
+    }
+
+    .highlight {
+      color: var(--color-accent);
+      font-weight: 500;
+    }
+
+    /* Grid lists */
+    .grid-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .grid-list-item {
+      padding: 1rem;
+      background: var(--color-background-secondary);
+      border-radius: 6px;
+      border-left: 3px solid var(--color-accent);
+    }
+
+    .grid-list-item h4 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: var(--color-accent);
+    }
+
+    @media (max-width: 768px) {
+      .grid-list {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="container">
+      <h1>The Guardians Are Here</h1>
+      <p class="subtitle">You are one of them</p>
+      <p class="text-secondary" style="font-size: 1.1rem; max-width: 700px; margin: 2rem auto;">There is a growing sense of awareness among humanity: that reality is being revealed differently than what we've been told. That we stand at a threshold between worlds. And that you are here to reclaim your heart and transform this world into the version you know it can be.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <h2 class="text-center">🌌 The Heart's Portal</h2>
+      <p class="text-center text-secondary" style="font-size: 1.1rem; max-width: 700px; margin: 0 auto 2rem;">Awakening God Within to Navigate Beyond Great Divide, Into New Earth</p>
+      
+      <p style="font-size: 1.05rem; margin-top: 2rem;">This is not simply a book.</p>
+      <p>It is an <span class="highlight">energetic transmission and activation field</span> encoded in written form. A living frequency designed to meet those who are in the process of remembering, reclaiming, and embodying who they truly are beyond conditioned reality.</p>
+
+      <div class="btn-group">
+        <a href="#buy" class="btn">📖 Ebook — $9.99</a>
+        <a href="#buy" class="btn">🎧 Audiobook — $14.99</a>
+        <a href="#buy" class="btn">✦ Bundle — $19.99</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container">
+      <h2 class="text-center">⚠️ This Is Not A Conventional Spiritual Book</h2>
+      <p class="text-center text-secondary" style="max-width: 700px; margin: 0 auto 2rem;">And you should know that upfront.</p>
+
+      <div class="list-items">
+        <div class="list-item">
+          <p><strong>This is not designed to entertain belief systems.</strong> It is not here to soften truth.</p>
+        </div>
+        <div class="list-item">
+          <p><strong>This is not here to absolve you of your work.</strong> Transformation requires your participation and your sovereignty.</p>
+        </div>
+        <div class="list-item">
+          <p><strong>This is a consciousness transmission</strong> encoded in written form, designed for those actively moving through the shift from 3D perception into the expanded version of the heart.</p>
+        </div>
+      </div>
+
+      <div class="emphasis-box">
+        <p><strong>This responds to authentic recognition of the heart, not surface-level interest.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <h2 class="text-center">🌿 This Book Is For You If...</h2>
+      <p class="text-center text-secondary">You are not arriving here by coincidence. You are arriving here because something within you is already in motion.</p>
+
+      <div class="list-items">
+        <div class="list-item">You sense that humanity is undergoing a profound shift in consciousness, but are unsure where and how you fit in</div>
+        <div class="list-item">You know fully where you fit in your service to humanity, but require support in coming to peace within your own personal life</div>
+        <div class="list-item">You are seeking a deeper sense of freedom, liberation, and enlightenment</div>
+        <div class="list-item">You have deep awareness of both the harmonic grids and distortions within the world simultaneously</div>
+        <div class="list-item">You have questioned systems, authority, meaning, and the nature of reality itself</div>
+        <div class="list-item">You experience a strong internal pull toward truth, sovereignty, and inner alignment</div>
+        <div class="list-item">You have already bucked the systems in your own way, but still feel empty inside</div>
+        <div class="list-item">You are unable to shake the anger or rage held toward authority, yet know it no longer serves you or the world</div>
+        <div class="list-item">You are sensitive to frequency, familiar with light codes, or open to new energetic input</div>
+        <div class="list-item">And most importantly: <strong>You are here to reclaim your heart and your Earthly home.</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container">
+      <h2 class="text-center">⚡ This Is Not For Everyone</h2>
+      <p class="text-center text-secondary">This transmission responds to authentic recognition, not surface-level interest.</p>
+
+      <div class="grid-list">
+        <div class="grid-list-item">
+          <h4>Not for those seeking:</h4>
+          <p>Surface-level motivation or positivity</p>
+        </div>
+        <div class="grid-list-item">
+          <h4>Not for those seeking:</h4>
+          <p>Purely psychological explanations of human behaviour</p>
+        </div>
+        <div class="grid-list-item">
+          <h4>Not for those seeking:</h4>
+          <p>Entertainment-based spirituality</p>
+        </div>
+        <div class="grid-list-item">
+          <h4>Not for those seeking:</h4>
+          <p>Intellectual curiosity without inner application</p>
+        </div>
+        <div class="grid-list-item">
+          <h4>Not for those seeking:</h4>
+          <p>Someone or something else to blame</p>
+        </div>
+        <div class="grid-list-item">
+          <h4>Not for those seeking:</h4>
+          <p>The easy way out</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <h2 class="text-center">🌌 What This Book Actually Is</h2>
+      
+      <p>The Heart's Portal is a <span class="highlight">living intelligence and energetic roadmap</span> designed to guide those navigating the collapse of old-world timelines—those missing a crucial piece of energy and information that catapults them into a new state of consciousness.</p>
+
+      <p>It guides you into a lived remembrance of:</p>
+      <div class="list-items">
+        <div class="list-item">The eternal intelligence of the heart</div>
+        <div class="list-item">The power of self-forgiveness</div>
+        <div class="list-item">The dissolution of separation-based perception</div>
+        <div class="list-item">Who you are and why you are here at this time</div>
+      </div>
+
+      <div class="emphasis-box">
+        <h3 style="margin-top: 0;">⚡ The Core Transmission</h3>
+        <p>In a realm of duality where forces of darkness have captivated the world's stages for eons, how do we—as individuals and as a species—manifest Heaven on Earth?</p>
+        <p>This book does not answer this intellectually. The author takes you through parts of her 3D and inter-dimensional journeys and guides you into the state where these answers become lived.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container">
+      <h2 class="text-center">🌿 What Readers Experience</h2>
+      
+      <p class="text-center text-secondary">Those who resonate with this work often describe:</p>
+
+      <div class="list-items">
+        <div class="list-item">A deep sense of recognition—as if something is being remembered</div>
+        <div class="list-item">Emotional release or inner softening during reading</div>
+        <div class="list-item">Clarity around personal and collective experience</div>
+        <div class="list-item">A shift in perception of self, life, and reality</div>
+        <div class="list-item">A feeling of being reoriented toward their soul's greater mission</div>
+      </div>
+
+      <p class="text-center" style="margin-top: 2rem; font-style: italic;">Not because something new is added... but because something is remembered.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <h2 class="text-center">💬 What Readers Are Saying</h2>
+
+      <div class="testimonial">
+        <p>"Your book changed my life. It was a full soul/heart/vision awakening, and I found peace within my heart amongst the societal chaos."</p>
+        <div class="testimonial-author">— Emilie LeBlanc</div>
+      </div>
+
+      <div class="testimonial">
+        <p>"This book is fabulous for those on the awakening path. I am not a big reader, but finished this book within hours of purchasing it. It is a must for all who are on the path."</p>
+        <div class="testimonial-author">— TB Renton, Amazon Review</div>
+      </div>
+
+      <div class="testimonial">
+        <p>"Your book has been a constant companion, a symbol of growth and transformation… a subtle yet powerful guide, offering expansion and protection at this stage of my life."</p>
+        <div class="testimonial-author">— Mari Coppini</div>
+      </div>
+
+      <div class="testimonial">
+        <p>"You must read this book."</p>
+        <div class="testimonial-author">— Mark Attwood, The Mark Attwood Show</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container">
+      <h2 class="text-center">🌌 Who This Is Really For</h2>
+
+      <div class="list-items">
+        <div class="list-item">
+          <h4 style="color: var(--color-accent); margin-bottom: 0.5rem;">🌿 Current and Emerging Societal Leaders</h4>
+          <p class="text-secondary">Those who hold positions of power but know that control and authoritarianism have come to an end.</p>
+        </div>
+        <div class="list-item">
+          <h4 style="color: var(--color-accent); margin-bottom: 0.5rem;">⚡ Lightworkers & Healers</h4>
+          <p class="text-secondary">The carers and the carers of the carers. Those who have been called to facilitate during this transition.</p>
+        </div>
+        <div class="list-item">
+          <h4 style="color: var(--color-accent); margin-bottom: 0.5rem;">🌌 The Unconsciously Activated</h4>
+          <p class="text-secondary">Those moving through awakening states that feel intense, destabilising, or difficult to explain using conventional language.</p>
+        </div>
+        <div class="list-item">
+          <h4 style="color: var(--color-accent); margin-bottom: 0.5rem;">⚔️ Freedom Fighters</h4>
+          <p class="text-secondary">Those intent on ensuring humanity maintains its inherent rights and free will.</p>
+        </div>
+        <div class="list-item">
+          <h4 style="color: var(--color-accent); margin-bottom: 0.5rem;">🌍 Spiritual Seekers</h4>
+          <p class="text-secondary">Those reclaiming inner authority, self-trust, and spiritual autonomy as a lived experience, not as concepts.</p>
+        </div>
+        <div class="list-item">
+          <h4 style="color: var(--color-accent); margin-bottom: 0.5rem;">🔥 Bridge Walkers</h4>
+          <p class="text-secondary">Those who can perceive both worlds—the old structure and the emerging reality—and feel called to assist humanity in the transition.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <h2 class="text-center">🌌 About the Author</h2>
+
+      <div class="about-section">
+        <div class="about-content">
+          <h3 style="margin-top: 0; color: var(--color-accent);">Zhara J. Mahlstedt</h3>
+          <p>Zhara J. Mahlstedt is a wayshower, light language activator, and psychic channel devoted to assisting individuals through consciousness transitions and reclaiming of their hearts.</p>
+          <p>She speaks light codes and harmonic resonances to awaken the original power within the human form.</p>
+          <p><strong>Featured on:</strong></p>
+          <div class="list-items" style="margin: 1rem 0;">
+            <div class="list-item">Beyond the Ordinary Show</div>
+            <div class="list-item">Mark Attwood Show</div>
+            <div class="list-item">Starlight Festival (Byron Bay, Australia)</div>
+            <div class="list-item">Conscious Life Festival (Sunshine Coast, Australia)</div>
+          </div>
+          <p>She is also a contributor to <em>New Earth Leadership: Redefining Global Leadership for a Changing World</em> (Amazon Bestseller).</p>
+          <p class="text-secondary">Her work is rooted in her own 3D and inter-dimensional experiences and deep, authentic inner transformation.</p>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <div style="width: 280px; height: 280px; background: var(--color-background-secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--color-border); color: var(--color-text-secondary);">
+            [Author Photo Here]
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container">
+      <h2 class="text-center">🌌 Why This Book Exists</h2>
+      <p>There are individuals on Earth right now who are here for the change, yet are unsure how to navigate it.</p>
+      <p>The old ways are falling away, yet many have no tangible structure for how to move forward, or they fear what lurks in the shadows.</p>
+      <div class="emphasis-box">
+        <p>The Heart's Portal includes the author's lived experience of some of the deepest transformational truths of all time and guides readers back to their own inner-sovereignty and deep-seated peace.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="buy">
+    <div class="container">
+      <h2 class="text-center">🔘 Enter The Heart's Portal</h2>
+      <p class="text-center text-secondary" style="margin-bottom: 2rem;">Choose your experience:</p>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3 style="margin-top: 0;">📖 Ebook</h3>
+          <div class="price-amount">$9.99</div>
+          <p class="price-description">Instant digital access</p>
+          <a href="#" class="btn" style="width: 100%;">Buy Now</a>
+        </div>
+
+        <div class="price-card">
+          <h3 style="margin-top: 0;">🎧 Audiobook</h3>
+          <div class="price-amount">$14.99</div>
+          <p class="price-description">Full narrated experience</p>
+          <a href="#" class="btn" style="width: 100%;">Buy Now</a>
+        </div>
+
+        <div class="price-card" style="border-color: var(--color-accent); background: linear-gradient(135deg, var(--color-background-secondary), var(--color-background-primary));">
+          <h3 style="margin-top: 0; color: var(--color-accent);">✦ Bundle</h3>
+          <div class="price-amount">$19.99</div>
+          <p class="price-description">Full transmission experience</p>
+          <a href="#" class="btn" style="width: 100%;">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container">
+      <h2 class="text-center">🌊 Expansion Path</h2>
+      <h3 class="text-center" style="margin-top: 0;">The Infinite Creator Calls</h3>
+      <p class="text-center text-secondary" style="max-width: 700px; margin: 0 auto 2rem;">A portal of information and energy designed to support you on your awakening path and assist you in connecting back to your heart.</p>
+
+      <div class="list-items" style="max-width: 600px; margin: 2rem auto;">
+        <div class="list-item">Live group transmissions</div>
+        <div class="list-item">Consciousness integration support</div>
+        <div class="list-item">Guided meditations</div>
+        <div class="list-item">Q & A</div>
+        <div class="list-item">Community field resonance</div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2rem;">
+        <div style="font-size: 1.3rem; color: var(--color-accent); font-weight: 500; margin-bottom: 1rem;">$699/year or $58.25/month</div>
+        <a href="#" class="btn">Join The Calls</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <h2 class="text-center">⚡ Frequently Asked Questions</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">Is this book for healing myself, or for becoming a better healer?</div>
+        <div class="faq-answer">
+          <p>Both. Many readers come to this book because they feel called to serve, yet feel disconnected. What they discover is that understanding consciousness transmission does far more than clarify their own path—it sharpens their intuition and increases their capacity to hold space for others without burnout.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">I have done a lot of inner work already. What makes this different?</div>
+        <div class="faq-answer">
+          <p>Most inner work focuses on trauma, mindset, or emotional processing. This book addresses something most spiritual seekers are never taught to recognize: multidimensional consciousness and energetic transmission that operates beyond the personal psyche. Many readers describe this as the missing link that explains why they hit a ceiling despite years of healing work.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Is this a practical how-to book with techniques and protocols?</div>
+        <div class="faq-answer">
+          <p>No. This is not a technique-based book. It is a consciousness transmission that shifts how you understand your role in the world's transformation. That awareness alone often brings immediate relief and a sense of grounding.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">How do I know this is credible and not just another spiritual theory?</div>
+        <div class="faq-answer">
+          <p>Zhara is known among spiritual circles as a channel and wayshower whose work is based on direct multidimensional experience. Her contributions to bestselling works and extensive feature appearances speak to her credibility. Readers consistently report that this is the first spiritual work that accurately describes their experience without minimizing or oversimplifying it.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">What do readers experience after reading this book?</div>
+        <div class="faq-answer">
+          <p>Readers commonly report: a deep sense of recognition and remembrance, emotional release and inner softening, clarity around their personal and collective experience, a shift in how they perceive themselves and reality, and a feeling of being reoriented toward their soul's greater mission.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">Why is this book priced so accessibly?</div>
+        <div class="faq-answer">
+          <p>Zhara believes that transformational knowledge should be accessible. While private clients invest significantly to work with her directly, this book is intentionally priced to remove financial barriers to understanding these profound truths.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">What's the best next step after reading the book?</div>
+        <div class="faq-answer">
+          <p>For some, the book alone creates a powerful shift in consciousness and clarity. For others, it opens the door to deeper learning through the Infinite Creator Calls. Either way, this book gives you the foundation to choose your next step from a grounded, empowered place.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-light">
+    <div class="container text-center">
+      <h2>⚡ Final Words</h2>
+      <p style="max-width: 700px; margin: 2rem auto; font-style: italic; color: var(--color-text-secondary);">"I didn't plan to write this book. This book planned for me to write it. 48 hours later The Heart's Portal was born." – Zhara J. Mahlstedt</p>
+      <p style="max-width: 700px; margin: 2rem auto;">If you are ready for New Earth, this book is a must-read. Many readers find themselves naturally synchronising with the field simply through exposure to the work. What you choose from that point forward is up to you.</p>
+      <div class="btn-group">
+        <a href="#buy" class="btn">Get Your Copy Now</a>
+      </div>
+    </div>
+  </div>
+
+  <footer style="padding: 3rem 2rem; text-align: center; border-top: 1px solid var(--color-border); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 0.9rem;">
+    <div class="container">
+      <p style="margin-bottom: 0.5rem;">© 2024 Zhara J. Mahlstedt. All Rights Reserved.</p>
+      <p style="margin: 0;">The Heart's Portal | Awakening God Within to Navigate Beyond Great Divide, Into New Earth</p>
+    </div>
+  </footer>
+</body>
+</html>
