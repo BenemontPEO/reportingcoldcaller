@@ -56,6 +56,7 @@
     .insight-emerald { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); }
     .insight-blue { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
   </style>
+<base target="_blank">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -88,10 +89,12 @@
       ]
     };
 
-    // Activity log — EMPTY: no calls have happened yet
-    // Add new rows here as activity occurs:
-    // { date: '2026-05-20', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0 },
-    const ACTIVITY_LOG = [];
+    // Activity log — Add new rows here as activity occurs:
+    // { date: '2026-05-20', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0, emailsSent: 0 },
+    const ACTIVITY_LOG = [
+      { date: '2026-05-29', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 304, appointmentsScheduled: 0, sold: 0, emailsSent: 2 },
+      { date: '2026-05-29', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 191, appointmentsScheduled: 0, sold: 0, emailsSent: 17 },
+    ];
   </script>
 
   <script>
@@ -163,8 +166,9 @@
       const totalCalls = activity.reduce((s, r) => s + r.numberOfCalls, 0);
       const totalAppointments = activity.reduce((s, r) => s + r.appointmentsScheduled, 0);
       const totalSold = activity.reduce((s, r) => s + r.sold, 0);
+      const totalEmails = activity.reduce((s, r) => s + (r.emailsSent || 0), 0);
       return {
-        totalCalls, totalAppointments, totalSold,
+        totalCalls, totalAppointments, totalSold, totalEmails,
         setRate: safeDiv(totalAppointments, totalCalls),
         closeRate: safeDiv(totalSold, totalAppointments),
         unusedPercent: safeDiv(leadSum.displayUnused, leadSum.displayLeads),
@@ -262,7 +266,8 @@
         const rows = activity.filter(r => r.agentName === a);
         const calls = rows.reduce((s, r) => s + r.numberOfCalls, 0);
         const appts = rows.reduce((s, r) => s + r.appointmentsScheduled, 0);
-        result[a] = { calls, appts, setRate: safeDiv(appts, calls) };
+        const emails = rows.reduce((s, r) => s + (r.emailsSent || 0), 0);
+        result[a] = { calls, appts, emails, setRate: safeDiv(appts, calls) };
       });
       return result;
     }
@@ -277,12 +282,13 @@
       const kpi = getKPIData();
       const discrepancy = hasDiscrepancy() && appState.agent === 'All';
       const html = `
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           ${kpiCard('Total Leads', formatNumber(kpi.totalLeads), 'Allocated + Unused', 'layers', COLORS.primary, 0)}
           ${kpiCard('Total Calls', formatNumber(kpi.totalCalls), `Set Rate: ${formatPercent(kpi.setRate)}`, 'phone', COLORS.primaryLight, 1)}
           ${kpiCard('Appointments', formatNumber(kpi.totalAppointments), `Close Rate: ${formatPercent(kpi.closeRate)}`, 'calendar', COLORS.accent, 2)}
           ${kpiCard('Deals Sold', formatNumber(kpi.totalSold), `${formatPercent(safeDiv(kpi.totalSold, kpi.totalCalls))} of calls`, 'dollar', COLORS.accentLight, 3)}
-          ${kpiCard('Unused Leads', formatNumber(kpi.totalUnused), `${formatPercent(kpi.unusedPercent)} of total inventory`, 'alert', COLORS.warning, 4, discrepancy)}
+          ${kpiCard('Emails Sent', formatNumber(kpi.totalEmails), 'Outreach activity', 'mail', COLORS.april, 4)}
+          ${kpiCard('Unused Leads', formatNumber(kpi.totalUnused), `${formatPercent(kpi.unusedPercent)} of total inventory`, 'alert', COLORS.warning, 5, discrepancy)}
         </div>
       `;
       document.getElementById('kpi-section').innerHTML = html;
@@ -294,7 +300,8 @@
         phone: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
         calendar: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
         dollar: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
-        alert: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
+        alert: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+        mail: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`
       };
       return `
         <div class="card relative p-6 animate-in delay-${idx+1}">
@@ -379,7 +386,7 @@
                     <p class="text-xs text-slate-500">${appState.leadSource === 'All' ? 'All Sources' : appState.leadSource}</p>
                   </div>
                 </div>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-4 gap-4">
                   <div>
                     <p class="text-2xl font-bold text-slate-900 tabular">${formatNumber(data[name]?.calls)}</p>
                     <p class="text-xs text-slate-500 mt-1">Calls Made</p>
@@ -387,6 +394,10 @@
                   <div>
                     <p class="text-2xl font-bold text-slate-900 tabular">${formatNumber(data[name]?.appts)}</p>
                     <p class="text-xs text-slate-500 mt-1">Appointments</p>
+                  </div>
+                  <div>
+                    <p class="text-2xl font-bold text-slate-900 tabular">${formatNumber(data[name]?.emails)}</p>
+                    <p class="text-xs text-slate-500 mt-1">Emails Sent</p>
                   </div>
                   <div>
                     <p class="text-2xl font-bold text-slate-900 tabular">${formatPercent(data[name]?.setRate)}</p>
@@ -435,15 +446,13 @@
                 <tr class="bg-slate-50 border-b border-slate-200">
                   <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('date')">Date${sortIcon('date')}</th>
                   <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('agentName')">Agent${sortIcon('agentName')}</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('leadSource')">Source${sortIcon('leadSource')}</th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('state')">State${sortIcon('state')}</th>
                   <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('numberOfCalls')">Calls${sortIcon('numberOfCalls')}</th>
                   <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('appointmentsScheduled')">Appts${sortIcon('appointmentsScheduled')}</th>
                   <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sortable" onclick="setSort('sold')">Sold${sortIcon('sold')}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                ${sorted.length === 0 ? `<tr><td colspan="7" class="px-4 py-12 text-center text-slate-400">${emptyMsg}</td></tr>` : sorted.map(row => `
+                ${sorted.length === 0 ? `<tr><td colspan="5" class="px-4 py-12 text-center text-slate-400">${emptyMsg}</td></tr>` : sorted.map(row => `
                   <tr class="hover:bg-slate-50/50 transition-colors">
                     <td class="px-4 py-3 font-medium text-slate-900">${fmtDate(row.date)}</td>
                     <td class="px-4 py-3">
@@ -452,8 +461,6 @@
                         ${row.agentName}
                       </span>
                     </td>
-                    <td class="px-4 py-3 text-slate-600">${row.leadSource}</td>
-                    <td class="px-4 py-3 text-slate-600">${row.state}</td>
                     <td class="px-4 py-3 font-semibold text-slate-900 tabular text-right">${row.numberOfCalls}</td>
                     <td class="px-4 py-3 font-semibold text-emerald-600 tabular text-right">${row.appointmentsScheduled}</td>
                     <td class="px-4 py-3 font-semibold text-slate-900 tabular text-right">${row.sold}</td>
@@ -463,7 +470,7 @@
               ${sorted.length > 0 ? `
               <tfoot class="bg-slate-50 border-t border-slate-200">
                 <tr>
-                  <td colspan="4" class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Totals</td>
+                  <td colspan="2" class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase">Totals</td>
                   <td class="px-4 py-3 text-sm font-bold text-slate-900 tabular text-right">${formatNumber(kpi.totalCalls)}</td>
                   <td class="px-4 py-3 text-sm font-bold text-emerald-600 tabular text-right">${formatNumber(kpi.totalAppointments)}</td>
                   <td class="px-4 py-3 text-sm font-bold text-slate-900 tabular text-right">${formatNumber(kpi.totalSold)}</td>
