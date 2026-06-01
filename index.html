@@ -92,8 +92,8 @@
     // Activity log — Add new rows here as activity occurs:
     // { date: '2026-05-20', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0, emailsSent: 0 },
     const ACTIVITY_LOG = [
-      { date: '2026-05-29', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 304, appointmentsScheduled: 0, sold: 0, emailsSent: 2 },
-      { date: '2026-05-29', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 191, appointmentsScheduled: 0, sold: 0, emailsSent: 17 },
+      { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 304, appointmentsScheduled: 0, sold: 0, emailsSent: 2 },
+      { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 191, appointmentsScheduled: 0, sold: 0, emailsSent: 17 },
     ];
   </script>
 
@@ -454,7 +454,7 @@
               <tbody class="divide-y divide-slate-100">
                 ${sorted.length === 0 ? `<tr><td colspan="5" class="px-4 py-12 text-center text-slate-400">${emptyMsg}</td></tr>` : sorted.map(row => `
                   <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-4 py-3 font-medium text-slate-900">${fmtDate(row.date)}</td>
+                    <td class="px-4 py-3 font-medium text-slate-900">${row.dateDisplay || fmtDate(row.date)}</td>
                     <td class="px-4 py-3">
                       <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${row.agentName === 'April' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'}">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
