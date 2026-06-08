@@ -57,6 +57,7 @@
     .insight-blue { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
   </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -65,8 +66,8 @@
        ═══════════════════════════════════════════════════════════════ -->
   <script>
     const LEAD_DATA = {
-      month: 'May 2026',
-      dateGiven: '2026-05-20',
+      month: 'June 2026',
+      dateGiven: '2026-05-28',
       sources: [
         {
           name: 'ADP TotalSource',
@@ -81,26 +82,33 @@
           name: 'TriNet',
           states: [
             { state: 'California', leads: 379, april: 243, samantha: 136, unused: 0 },
-            { state: 'New York', leads: 289, april: 0, samantha: 71, unused: 218 },
+            { state: 'New York', leads: 289, april: 100, samantha: 71, unused: 118 },
             { state: 'Colorado', leads: 72, april: 7, samantha: 14, unused: 51 },
             { state: 'Arizona', leads: 29, april: 0, samantha: 29, unused: 0 },
+          ]
+        },
+        {
+          name: 'Insperity',
+          states: [
+            { state: 'New York', leads: 173, april: 0, samantha: 173, unused: 0 },
           ]
         }
       ]
     };
 
     // Activity log — Add new rows here as activity occurs:
-    // { date: '2026-05-20', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 0, appointmentsScheduled: 0, sold: 0, emailsSent: 0 },
     const ACTIVITY_LOG = [
       { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 304, appointmentsScheduled: 0, sold: 0, emailsSent: 2 },
       { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 191, appointmentsScheduled: 0, sold: 0, emailsSent: 17 },
+      { date: '2026-06-05', dateDisplay: 'June 1-5, 2026', agentName: 'Samantha', leadSource: 'Insperity', state: 'New York', numberOfCalls: 386, appointmentsScheduled: 0, sold: 0, emailsSent: 4 },
+      { date: '2026-06-05', dateDisplay: 'June 1-5, 2026', agentName: 'April', leadSource: 'TriNet', state: 'New York', numberOfCalls: 229, appointmentsScheduled: 0, sold: 0, emailsSent: 7 },
     ];
   </script>
 
   <script>
     const AGENTS = ['April', 'Samantha'];
-    const MONTHS = ['May 2026'];
-    const SOURCES = ['All', 'ADP TotalSource', 'TriNet'];
+    const MONTHS = ['May 2026', 'June 2026'];
+    const SOURCES = ['All', 'ADP TotalSource', 'TriNet', 'Insperity'];
     const COLORS = {
       primary: '#1e3a5f', primaryLight: '#2c5282', accent: '#10b981', accentLight: '#34d399',
       warning: '#f59e0b', danger: '#ef4444', april: '#3b82f6', samantha: '#8b5cf6', unused: '#cbd5e1',
@@ -109,7 +117,7 @@
 
     let appState = {
       leadSource: 'All',
-      month: 'May 2026',
+      month: 'June 2026',
       agent: 'All',
       sortKey: 'date',
       sortDir: 'desc'
@@ -136,7 +144,9 @@
       return ACTIVITY_LOG.filter(row => {
         const matchSource = appState.leadSource === 'All' || row.leadSource === appState.leadSource;
         const matchAgent = appState.agent === 'All' || row.agentName === appState.agent;
-        const matchMonth = appState.month === 'All' || row.date.startsWith('2026-05');
+        const matchMonth = appState.month === 'All' || 
+          (appState.month === 'May 2026' && row.date.startsWith('2026-05')) ||
+          (appState.month === 'June 2026' && row.date.startsWith('2026-06'));
         return matchSource && matchAgent && matchMonth;
       });
     }
@@ -718,7 +728,6 @@
       const ctx5 = document.getElementById('chart-donut');
       if (ctx5) {
         if (donutData.length === 0) {
-          // Show empty state in donut
           chartInstances.donut = new Chart(ctx5, {
             type: 'doughnut',
             data: {
@@ -806,7 +815,7 @@
     }
 
     function resetFilters() {
-      appState = { leadSource: 'All', month: 'May 2026', agent: 'All', sortKey: 'date', sortDir: 'desc' };
+      appState = { leadSource: 'All', month: 'June 2026', agent: 'All', sortKey: 'date', sortDir: 'desc' };
       refreshAll();
     }
 
@@ -836,7 +845,7 @@
           </div>
           <div>
             <h1 class="text-xl font-bold text-slate-900 tracking-tight">PEO Performance Dashboard</h1>
-            <p class="text-xs text-slate-500 font-medium">Cold-Caller Analytics • May 2026</p>
+            <p class="text-xs text-slate-500 font-medium">Cold-Caller Analytics • June 2026</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
