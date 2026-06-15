@@ -58,6 +58,7 @@
   </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -67,7 +68,7 @@
   <script>
     const LEAD_DATA = {
       month: 'June 2026',
-      dateGiven: '2026-05-28',
+      dateGiven: '2026-05-25',
       sources: [
         {
           name: 'ADP TotalSource',
@@ -82,7 +83,7 @@
           name: 'TriNet',
           states: [
             { state: 'California', leads: 379, april: 243, samantha: 136, unused: 0 },
-            { state: 'New York', leads: 289, april: 100, samantha: 71, unused: 118 },
+            { state: 'New York', leads: 289, april: 200, samantha: 71, unused: 18 },
             { state: 'Colorado', leads: 72, april: 7, samantha: 14, unused: 51 },
             { state: 'Arizona', leads: 29, april: 0, samantha: 29, unused: 0 },
           ]
@@ -95,7 +96,7 @@
             { state: 'Colorado', leads: 114, april: 0, samantha: 0, unused: 114 },
             { state: 'Georgia', leads: 122, april: 0, samantha: 0, unused: 122 },
             { state: 'New Jersey', leads: 66, april: 0, samantha: 0, unused: 66 },
-            { state: 'New York', leads: 172, april: 0, samantha: 0, unused: 172 },
+            { state: 'New York', leads: 345, april: 0, samantha: 173, unused: 172 },
           ]
         },
         {
@@ -114,9 +115,11 @@
     // Activity log — Add new rows here as activity occurs:
     const ACTIVITY_LOG = [
       { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'Samantha', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 304, appointmentsScheduled: 0, sold: 0, emailsSent: 2 },
-      { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 191, appointmentsScheduled: 0, sold: 0, emailsSent: 17 },
+      { date: '2026-05-29', dateDisplay: 'May 25-29, 2026', agentName: 'April', leadSource: 'ADP TotalSource', state: 'California', numberOfCalls: 238, appointmentsScheduled: 0, sold: 0, emailsSent: 17 },
       { date: '2026-06-05', dateDisplay: 'June 1-5, 2026', agentName: 'Samantha', leadSource: 'Insperity', state: 'New York', numberOfCalls: 386, appointmentsScheduled: 0, sold: 0, emailsSent: 4 },
-      { date: '2026-06-05', dateDisplay: 'June 1-5, 2026', agentName: 'April', leadSource: 'TriNet', state: 'New York', numberOfCalls: 229, appointmentsScheduled: 0, sold: 0, emailsSent: 7 },
+      { date: '2026-06-05', dateDisplay: 'June 1-5, 2026', agentName: 'April', leadSource: 'TriNet', state: 'New York', numberOfCalls: 185, appointmentsScheduled: 0, sold: 0, emailsSent: 7 },
+      { date: '2026-06-12', dateDisplay: 'June 8-12, 2026', agentName: 'Samantha', leadSource: 'TriNet', state: 'New York', numberOfCalls: 517, appointmentsScheduled: 1, sold: 0, emailsSent: 0 },
+      { date: '2026-06-12', dateDisplay: 'June 8-12, 2026', agentName: 'April', leadSource: 'TriNet', state: 'California', numberOfCalls: 299, appointmentsScheduled: 0, sold: 0, emailsSent: 4 },
     ];
   </script>
 
